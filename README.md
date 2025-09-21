@@ -7,8 +7,8 @@ A professional, modern web application built with Angular 17 for managing driver
 
 ## 🚀 Live Demo
 
-- **Live Application**: [Deploy on Vercel](https://your-app-name.vercel.app)
-- **GitHub Repository**: [View Source Code](https://github.com/your-username/scheduling-dashboard)
+- **Live Application**: [Deploy on Vercel](https://driverscheduling89-git-main-sarahs-projects-39d05a88.vercel.app?_vercel_share=OlBohUMp5k0tCPTAqIYBXbAmwbUGbuS0)
+- **GitHub Repository**: [View Source Code](https://github.com/SarahMamdouh21/Driver-Scheduling.git)
 
 ## ✨ Features
 
@@ -256,12 +256,7 @@ interface Route {
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
 
-**Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
-- Email: your.email@example.com
 
 ## 🙏 Acknowledgments
 
