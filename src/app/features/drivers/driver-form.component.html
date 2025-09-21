@@ -1,0 +1,249 @@
+<div class="form-container">
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <path d="M6 21v-2a4 4 0 0 1 4-4h.5"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 class="form-title">Add New Driver</h1>
+        <p class="form-subtitle">Register a new driver to your fleet management system</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="driverForm" (ngSubmit)="onSubmit()" class="driver-form">
+      <div class="form-grid">
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <h3 class="section-title">Personal Information</h3>
+          </div>
+          
+          <div class="form-group">
+            <div class="input-container">
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-input"
+                [class.error]="driverForm.get('name')?.invalid && driverForm.get('name')?.touched"
+                placeholder=" "
+                required
+              />
+              <label for="name" class="form-label">Full Name</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('name')?.invalid && driverForm.get('name')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-container">
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                class="form-input"
+                [class.error]="driverForm.get('email')?.invalid && driverForm.get('email')?.touched"
+                placeholder=" "
+                required
+              />
+              <label for="email" class="form-label">Email Address</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('email')?.invalid && driverForm.get('email')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-container">
+              <input
+                type="tel"
+                id="phone"
+                formControlName="phone"
+                class="form-input"
+                [class.error]="driverForm.get('phone')?.invalid && driverForm.get('phone')?.touched"
+                placeholder=" "
+                required
+              />
+              <label for="phone" class="form-label">Phone Number</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('phone')?.invalid && driverForm.get('phone')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Please enter a valid phone number
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional Information Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 17h20M5 17V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10M5 17h14M9 9h6M9 13h6"/>
+              </svg>
+            </div>
+            <h3 class="section-title">Professional Details</h3>
+          </div>
+
+          <div class="form-group">
+            <div class="input-container">
+              <input
+                type="text"
+                id="licenseNumber"
+                formControlName="licenseNumber"
+                class="form-input"
+                [class.error]="driverForm.get('licenseNumber')?.invalid && driverForm.get('licenseNumber')?.touched"
+                placeholder=" "
+                required
+              />
+              <label for="licenseNumber" class="form-label">License Number</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <circle cx="12" cy="16" r="1"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('licenseNumber')?.invalid && driverForm.get('licenseNumber')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              License number is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-container">
+              <select
+                id="vehicleType"
+                formControlName="vehicleType"
+                class="form-input"
+                [class.error]="driverForm.get('vehicleType')?.invalid && driverForm.get('vehicleType')?.touched"
+                required
+              >
+                <option value="" disabled>Select Vehicle Type</option>
+                <option value="Heavy Truck">Heavy Truck</option>
+                <option value="Delivery Van">Delivery Van</option>
+                <option value="Refrigerated Truck">Refrigerated Truck</option>
+                <option value="Box Truck">Box Truck</option>
+                <option value="Flatbed Truck">Flatbed Truck</option>
+                <option value="Pickup Truck">Pickup Truck</option>
+              </select>
+              <label for="vehicleType" class="form-label">Vehicle Type</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 17h20M5 17V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10M5 17h14M9 9h6M9 13h6"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('vehicleType')?.invalid && driverForm.get('vehicleType')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Please select a vehicle type
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-container">
+              <input
+                type="number"
+                id="experience"
+                formControlName="experience"
+                class="form-input"
+                [class.error]="driverForm.get('experience')?.invalid && driverForm.get('experience')?.touched"
+                placeholder=" "
+                min="0"
+                max="50"
+                required
+              />
+              <label for="experience" class="form-label">Years of Experience</label>
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="driverForm.get('experience')?.invalid && driverForm.get('experience')?.touched" class="error-message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Please enter years of experience (0-50)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1,4 1,10 7,10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          Reset Form
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="driverForm.invalid || isSubmitting">
+          <svg *ngIf="!isSubmitting" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17,21 17,13 7,13 7,21"/>
+            <polyline points="7,3 7,8 15,8"/>
+          </svg>
+          <div *ngIf="isSubmitting" class="spinner"></div>
+          {{ isSubmitting ? 'Adding Driver...' : 'Add Driver' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

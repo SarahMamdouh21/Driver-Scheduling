@@ -1,0 +1,308 @@
+<div class="dashboard-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="gradient-text">Driver Scheduling</span>
+          <br>Dashboard
+        </h1>
+        <p class="hero-subtitle">
+          Streamline your fleet management with real-time insights and intelligent scheduling
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">{{ getStats().totalDrivers }}</div>
+          <div class="stat-label">Total Drivers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">{{ getStats().availableDrivers }}</div>
+          <div class="stat-label">Available</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">{{ getStats().totalRoutes }}</div>
+          <div class="stat-label">Active Routes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="main-grid">
+    <!-- Routes Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="title-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+              <circle cx="6" cy="6" r="2"/>
+              <circle cx="6" cy="12" r="2"/>
+              <circle cx="6" cy="18" r="2"/>
+            </svg>
+          </div>
+          <h2>Route Management</h2>
+        </div>
+        <div class="section-controls">
+          <div class="search-container">
+            <input
+              type="text"
+              placeholder="Search routes..."
+              [(ngModel)]="searchRouteQuery"
+              (input)="onRouteSearch()"
+              class="search-input"
+            />
+            <div class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
+          </div>
+          <select [(ngModel)]="filterRouteStatus" (change)="onRouteStatusFilter()" class="filter-select">
+            <option value="all">All Status</option>
+            <option value="unassigned">Unassigned</option>
+            <option value="assigned">Assigned</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="routes-container">
+        <div *ngFor="let route of filteredRoutes" class="route-card" [class.unassigned]="route.status === 'unassigned'">
+          <div class="route-header">
+            <div class="route-info">
+              <h3 class="route-name">{{ route.name }}</h3>
+              <div class="route-meta">
+                <span class="route-distance">{{ route.distance }}km</span>
+                <span class="route-duration">{{ route.estimatedDuration }}min</span>
+              </div>
+            </div>
+            <div class="route-badges">
+              <span class="status-badge" [style.background-color]="getStatusColor(route.status)">
+                {{ route.status | titlecase }}
+              </span>
+              <span class="priority-badge" [style.background-color]="getPriorityColor(route.priority)">
+                {{ route.priority | titlecase }}
+              </span>
+            </div>
+          </div>
+
+          <div class="route-details">
+            <div class="route-locations">
+              <div class="location-item">
+                <div class="location-dot start"></div>
+                <span>{{ route.startLocation }}</span>
+              </div>
+              <div class="route-line"></div>
+              <div class="location-item">
+                <div class="location-dot end"></div>
+                <span>{{ route.endLocation }}</span>
+              </div>
+            </div>
+
+            <!-- Additional Route Information -->
+            <div class="route-additional-info">
+              <div class="info-row">
+                <div class="info-item">
+                  <span class="info-label">Vehicle Type</span>
+                  <span class="info-value">{{ getVehicleTypeIcon(route.vehicleType) }} {{ route.vehicleType | titlecase }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Scheduled Date</span>
+                  <span class="info-value">{{ formatDate(route.scheduledDate) }}</span>
+                </div>
+              </div>
+              <div class="info-row" *ngIf="route.description">
+                <div class="info-item full-width">
+                  <span class="info-label">Description</span>
+                  <span class="info-value">{{ route.description }}</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-item">
+                  <span class="info-label">Created</span>
+                  <span class="info-value">{{ formatDate(route.createdAt) }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Route ID</span>
+                  <span class="info-value route-id">{{ route.id }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="route-assignment">
+              <div *ngIf="route.assignedDriverName" class="assigned-driver">
+                <div class="driver-avatar">
+                  {{ route.assignedDriverName.charAt(0).toUpperCase() }}
+                </div>
+                <div class="driver-info">
+                  <span class="driver-name">{{ route.assignedDriverName }}</span>
+                  <span class="assignment-time">{{ formatDate(route.scheduledDate) }}</span>
+                </div>
+                <button class="btn btn-sm btn-ghost" (click)="unassignRoute(route.id)">
+                  Unassign
+                </button>
+              </div>
+              
+              <div *ngIf="!route.assignedDriverName" class="unassigned-driver">
+                <div class="unassigned-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                    <path d="M12 9v4"/>
+                    <path d="M12 17h.01"/>
+                  </svg>
+                </div>
+                <span class="unassigned-text">No driver assigned</span>
+                <select 
+                  class="driver-select"
+                  #driverSelect
+                  (change)="assignRouteToDriver(route.id, driverSelect.value); driverSelect.value = ''"
+                >
+                  <option value="">Select driver...</option>
+                  <option 
+                    *ngFor="let driver of getAvailableDriversForRoute(route)" 
+                    [value]="driver.id"
+                  >
+                    {{ driver.name }} ({{ driver.vehicleType }})
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drivers Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="title-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              <path d="M6 21v-2a4 4 0 0 1 4-4h.5"/>
+            </svg>
+          </div>
+          <h2>Driver Management</h2>
+        </div>
+        <div class="section-controls">
+          <div class="search-container">
+            <input
+              type="text"
+              placeholder="Search drivers..."
+              [(ngModel)]="searchDriverQuery"
+              (input)="onDriverSearch()"
+              class="search-input"
+            />
+            <div class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
+          </div>
+          <select [(ngModel)]="filterDriverStatus" (change)="onDriverStatusFilter()" class="filter-select">
+            <option value="all">All Drivers</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="drivers-container">
+        <div *ngFor="let driver of filteredDrivers" class="driver-card" [class.busy]="!driver.isAvailable">
+          <div class="driver-header">
+            <div class="driver-avatar-large">
+              {{ driver.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="driver-info">
+              <h3 class="driver-name">{{ driver.name }}</h3>
+              <p class="driver-email">{{ driver.email }}</p>
+              <div class="driver-rating">
+                <span class="rating-stars">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                  </svg>
+                </span>
+                <span class="rating-value">{{ driver.rating }}/5</span>
+              </div>
+            </div>
+            <div class="driver-status">
+              <label class="toggle-switch">
+                <input
+                  type="checkbox"
+                  [checked]="driver.isAvailable"
+                  (change)="onDriverAvailabilityChange(driver.id, $event)"
+                />
+                <span class="slider"></span>
+              </label>
+              <span class="status-text" [class.available]="driver.isAvailable">
+                {{ driver.isAvailable ? 'Available' : 'Busy' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="driver-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Phone</span>
+                <span class="detail-value">{{ driver.phone }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">License</span>
+                <span class="detail-value">{{ driver.licenseNumber }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value">{{ getVehicleTypeIcon(driver.vehicleType) }} {{ driver.vehicleType | titlecase }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Experience</span>
+                <span class="detail-value">{{ driver.experience }} years</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Join Date</span>
+                <span class="detail-value">{{ formatDate(driver.joinDate) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Driver ID</span>
+                <span class="detail-value driver-id">{{ driver.id }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="driver.assignedRoutes.length > 0" class="assigned-routes">
+              <h4 class="routes-title">
+                Assigned Routes 
+                <span class="route-count">({{ driver.assignedRoutes.length }})</span>
+              </h4>
+              <div class="routes-list">
+                <div *ngFor="let routeId of driver.assignedRoutes" class="route-item">
+                  <div class="route-item-content">
+                    <span class="route-name">{{ getRouteName(routeId) }}</span>
+                    <span class="route-id-small">ID: {{ routeId }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="driver.assignedRoutes.length === 0" class="no-routes">
+              <div class="no-routes-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12h18M3 6h18M3 18h18"/>
+                  <circle cx="6" cy="6" r="2"/>
+                  <circle cx="6" cy="12" r="2"/>
+                  <circle cx="6" cy="18" r="2"/>
+                </svg>
+              </div>
+              <span class="no-routes-text">No routes assigned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,295 @@
+<div class="calendar-container">
+  <!-- Modern Header -->
+  <div class="calendar-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="calendar-title">
+          <span class="title-icon">📅</span>
+          <span class="gradient-text">Schedule Calendar</span>
+        </h1>
+        <p class="calendar-subtitle">Manage driver assignments and route scheduling with precision</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-number">{{ getTotalRoutes() }}</div>
+          <div class="stat-label">Total Routes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ getAvailableDrivers() }}</div>
+          <div class="stat-label">Available Drivers</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Controls -->
+  <div class="calendar-controls">
+    <div class="controls-left">
+      <button class="control-btn secondary" (click)="previousMonth()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15,18 9,12 15,6"/>
+        </svg>
+        Previous
+      </button>
+      <button class="control-btn secondary" (click)="nextMonth()">
+        Next
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9,18 15,12 9,6"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="controls-center">
+      <h2 class="month-year">{{ getMonthName() }}</h2>
+    </div>
+    
+    <div class="controls-right">
+      <button class="control-btn primary" (click)="goToToday()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Today
+      </button>
+    </div>
+  </div>
+
+  <!-- Modern Calendar Grid -->
+  <div class="calendar-grid">
+    <!-- Enhanced Day Headers -->
+    <div class="day-header">Sunday</div>
+    <div class="day-header">Monday</div>
+    <div class="day-header">Tuesday</div>
+    <div class="day-header">Wednesday</div>
+    <div class="day-header">Thursday</div>
+    <div class="day-header">Friday</div>
+    <div class="day-header">Saturday</div>
+
+    <!-- Enhanced Calendar Days -->
+    <div 
+      *ngFor="let day of calendarDays" 
+      class="calendar-day"
+      [class.other-month]="!day.isCurrentMonth"
+      [class.today]="day.isToday"
+      [class.has-routes]="day.routes.length > 0"
+    >
+      <div class="day-header-info">
+        <div class="day-number" [class.today-number]="day.isToday">
+          {{ getDayNumber(day) }}
+        </div>
+        <div class="day-stats" *ngIf="day.routes.length > 0">
+          <span class="route-count">{{ day.routes.length }} route{{ day.routes.length !== 1 ? 's' : '' }}</span>
+        </div>
+      </div>
+      
+      <div class="day-content">
+        <!-- Enhanced Routes Section -->
+        <div *ngIf="day.routes.length > 0" class="routes-section">
+          <div class="routes-container">
+            <div 
+              *ngFor="let route of day.routes" 
+              class="route-card"
+              [class.unassigned]="route.status === 'unassigned'"
+              [class.assigned]="route.status === 'assigned'"
+              [class.in-progress]="route.status === 'in-progress'"
+              [class.completed]="route.status === 'completed'"
+            >
+              <!-- Route Header -->
+              <div class="route-card-header">
+                <div class="route-time-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12,6 12,12 16,14"/>
+                  </svg>
+                  {{ formatTime(route.scheduledDate) }}
+                </div>
+                <div class="route-status-indicator" [style.background-color]="getStatusColor(route.status)"></div>
+              </div>
+
+              <!-- Route Information -->
+              <div class="route-info">
+                <h4 class="route-name">{{ route.name }}</h4>
+                <div class="route-location">
+                  <div class="location-item">
+                    <div class="location-dot start"></div>
+                    <span>{{ route.startLocation }}</span>
+                  </div>
+                  <div class="location-arrow">→</div>
+                  <div class="location-item">
+                    <div class="location-dot end"></div>
+                    <span>{{ route.endLocation }}</span>
+                  </div>
+                </div>
+                
+                <div class="route-meta">
+                  <div class="meta-item">
+                    <span class="meta-label">Distance:</span>
+                    <span class="meta-value">{{ route.distance }}km</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Duration:</span>
+                    <span class="meta-value">{{ route.estimatedDuration }}min</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Vehicle:</span>
+                    <span class="meta-value">{{ getVehicleTypeIcon(route.vehicleType) }} {{ route.vehicleType | titlecase }}</span>
+                  </div>
+                </div>
+
+                <div class="route-badges">
+                  <span 
+                    class="status-badge" 
+                    [style.background-color]="getStatusColor(route.status)"
+                  >
+                    {{ route.status | titlecase }}
+                  </span>
+                  <span 
+                    class="priority-badge" 
+                    [style.background-color]="getPriorityColor(route.priority)"
+                  >
+                    {{ route.priority | titlecase }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Driver Assignment Section -->
+              <div class="route-assignment">
+                <div *ngIf="route.assignedDriverName" class="assigned-driver">
+                  <div class="driver-avatar">
+                    {{ route.assignedDriverName.charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="driver-info">
+                    <div class="driver-name">{{ route.assignedDriverName }}</div>
+                    <div class="assignment-status">Assigned</div>
+                  </div>
+                  <button class="btn btn-sm btn-ghost" (click)="unassignRoute(route.id)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div *ngIf="!route.assignedDriverName" class="unassigned-driver">
+                  <div class="unassigned-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                      <path d="M12 9v4"/>
+                      <path d="M12 17h.01"/>
+                    </svg>
+                  </div>
+                  <div class="unassigned-text">No driver assigned</div>
+                  <select 
+                    class="driver-select"
+                    #driverSelect
+                    (change)="assignRouteToDriver(route.id, driverSelect.value); driverSelect.value = ''"
+                  >
+                    <option value="">Select driver...</option>
+                    <option 
+                      *ngFor="let driver of getAvailableDriversForRoute(route)" 
+                      [value]="driver.id"
+                    >
+                      {{ driver.name }} ({{ driver.vehicleType }})
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Drivers Section -->
+        <div *ngIf="day.drivers.length > 0" class="drivers-section">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Available Drivers ({{ day.drivers.length }})
+          </div>
+          <div class="drivers-grid">
+            <div 
+              *ngFor="let driver of day.drivers.slice(0, 4)" 
+              class="driver-card"
+            >
+              <div class="driver-avatar">
+                {{ driver.name.charAt(0).toUpperCase() }}
+              </div>
+              <div class="driver-info">
+                <div class="driver-name">{{ driver.name }}</div>
+                <div class="driver-vehicle">
+                  {{ getVehicleTypeIcon(driver.vehicleType) }} {{ driver.vehicleType | titlecase }}
+                </div>
+                <div class="driver-rating">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                  </svg>
+                  {{ driver.rating }}/5
+                </div>
+              </div>
+            </div>
+            <div *ngIf="day.drivers.length > 4" class="more-drivers">
+              <div class="more-drivers-content">
+                <span class="more-count">+{{ day.drivers.length - 4 }}</span>
+                <span class="more-text">more</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="day.routes.length === 0 && day.drivers.length === 0" class="empty-day">
+          <div class="empty-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <span class="empty-text">No activities scheduled</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Legend -->
+  <div class="calendar-legend">
+    <div class="legend-header">
+      <h4>Status Legend</h4>
+      <p>Route status indicators and their meanings</p>
+    </div>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #e74c3c;"></div>
+        <div class="legend-info">
+          <span class="legend-label">Unassigned</span>
+          <span class="legend-desc">No driver assigned</span>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #f39c12;"></div>
+        <div class="legend-info">
+          <span class="legend-label">Assigned</span>
+          <span class="legend-desc">Driver assigned</span>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #3498db;"></div>
+        <div class="legend-info">
+          <span class="legend-label">In Progress</span>
+          <span class="legend-desc">Route in progress</span>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #27ae60;"></div>
+        <div class="legend-info">
+          <span class="legend-label">Completed</span>
+          <span class="legend-desc">Route completed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
